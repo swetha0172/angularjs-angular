@@ -3,6 +3,10 @@
 //The $scope is ultimately bound to the products view
 app.controller('ProductsController', function ($scope, productsService, $http) {
 
+    $scope.newProduct = {};
+    $scope.isEditing = false;
+    $scope.editingId = null;
+
     init();
 
     function init() {
@@ -11,27 +15,46 @@ app.controller('ProductsController', function ($scope, productsService, $http) {
         });
     }
 
+    $scope.startEdit = function (product) {
+        $scope.isEditing = true;
+        $scope.editingId = product.id;
+        $scope.newProduct = {
+            name: product.name,
+            code: product.code,
+            description: product.description,
+            price: product.price
+        };
+    };
+
     $scope.insertProduct = function () {
         var name = $scope.newProduct.name;
         var code = $scope.newProduct.code;
         var description = $scope.newProduct.description;
         var price = $scope.newProduct.price;
 
-        productsService.insertProduct(name, code, description, price).success(function(data, status, headers, config){
-            $scope.products.push(
-                {
-                    id: data,
-                    name: name,
-                    code: code,
-                    description: description,
-                    price: price
+        if ($scope.isEditing) {
+            productsService.updateProduct($scope.editingId, name, code, description, price)
+                .success(function (data) {
+                    // refresh list from backend
+                    init();
+                    $scope.isEditing = false;
+                    $scope.editingId = null;
+                    $scope.newProduct = {};
+                })
+                .error(function (err) {
+                    console.log('Update error', err);
                 });
-        });
-
-        $scope.newProduct.name = '';
-        $scope.newProduct.code = '';
-        $scope.newProduct.description = '';
-        $scope.newProduct.price = '';
+        } else {
+            productsService.insertProduct(name, code, description, price)
+                .success(function (data) {
+                    // append or reload; reload to keep consistent with server
+                    init();
+                    $scope.newProduct = {};
+                })
+                .error(function (err) {
+                    console.log('Insert error', err);
+                });
+        }
     };
 
     $scope.deleteProduct = function (id) {
@@ -46,6 +69,5 @@ app.controller('ProductsController', function ($scope, productsService, $http) {
 
         });
     };
-
 
 });

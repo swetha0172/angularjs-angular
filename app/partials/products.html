@@ -33,7 +33,7 @@
             <div class="col-sm-offset-3 col-sm-10">
                 <button type="button" class="btn btn-primary"
                     data-ng-disabled="!newProduct.name"
-                    data-ng-click="insertProduct()">Add Product</button>
+                    data-ng-click="insertProduct()">{{ isEditing ? 'Save' : 'Add Product' }}</button>
             </div>
         </div>
     </form>
@@ -59,11 +59,11 @@
             <td>{{ product.price}}</td>
             <td>
 
-                <button>
-                    <a class="glyphicon glyphicon-edit"></a>
+                <button type="button" class="btn btn-default btn-sm" data-ng-click="startEdit(product)">
+                    <span class="glyphicon glyphicon-edit"></span>
                 </button>
-                <button data-ng-click="deleteProduct(product.id)">
-                    <a class="glyphicon glyphicon-trash"></a>
+                <button type="button" class="btn btn-danger btn-sm" data-ng-click="deleteProduct(product.id)">
+                    <span class="glyphicon glyphicon-trash"></span>
                 </button>
 
             </td>

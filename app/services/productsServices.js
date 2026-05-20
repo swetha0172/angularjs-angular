@@ -22,4 +22,15 @@ app.service('productsService', function ($http) {
         return $http.post("app/server/db.php?action=delete",{'id': id});
     };
 
+    this.updateProduct = function (id, name, code, description, price) {
+        return $http.post("app/server/db.php?action=update",
+            {
+                'id': id,
+                'name': name,
+                'code': code,
+                'description': description,
+                'price': price
+            });
+    };
+
 });
